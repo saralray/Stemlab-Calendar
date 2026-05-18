@@ -41,7 +41,7 @@ Update `.env` with your values:
 
 ```env
 GOOGLE_API_KEY=your-google-api-key
-GOOGLE_CALENDAR_ID=075fc8ead0cabfe9bee641306e905d712f052131f84960ab83d386556b72156b@group.calendar.google.com
+GOOGLE_CALENDAR_ID=YOUR_GOOGLE_CALENDAR_ID
 GOOGLE_CALENDAR_TIMEZONE=Asia/Bangkok
 GOOGLE_SERVICE_ACCOUNT_JSON_HOST_DIR=./secrets
 GOOGLE_SERVICE_ACCOUNT_JSON_FILE=/app/secrets/service-account.json
