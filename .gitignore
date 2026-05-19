@@ -1,5 +1,6 @@
 .env
 .codex
+k8s/secret.yaml
 node_modules
 dist
 coverage

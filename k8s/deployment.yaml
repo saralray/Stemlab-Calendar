@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: booking-calendar
+  namespace: booking-calendar
+  labels:
+    app: booking-calendar
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: booking-calendar
+  template:
+    metadata:
+      labels:
+        app: booking-calendar
+    spec:
+      containers:
+        - name: booking-calendar
+          image: ghcr.io/saralray/booking-calendar-website:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: booking-calendar-config
+          env:
+            - name: GOOGLE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: booking-calendar-secret
+                  key: GOOGLE_API_KEY
+            - name: GOOGLE_SERVICE_ACCOUNT_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: booking-calendar-secret
+                  key: GOOGLE_SERVICE_ACCOUNT_EMAIL
+            - name: GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: booking-calendar-secret
+                  key: GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY
+          volumeMounts:
+            - name: service-account
+              mountPath: /app/secrets
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: service-account
+          secret:
+            secretName: booking-calendar-secret
+            items:
+              - key: service-account.json
+                path: service-account.json
