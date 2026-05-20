@@ -64,19 +64,11 @@ jobs:
   deploy:
     needs: build-and-push
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, stemlab]
 
     steps:
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v4
-
-      - name: Write kubeconfig
-        run: |
-          mkdir -p "$HOME/.kube"
-          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > "$HOME/.kube/config"
-          chmod 600 "$HOME/.kube/config"
-
       - name: Roll out deployment
         run: |
+          export KUBECONFIG="$HOME/.kube/config"
           kubectl -n booking-calendar rollout restart deployment/booking-calendar
           kubectl -n booking-calendar rollout status deployment/booking-calendar --timeout=5m
